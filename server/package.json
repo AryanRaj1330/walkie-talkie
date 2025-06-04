@@ -1,0 +1,19 @@
+{
+  "name": "walkie-talkie",
+  "version": "1.0.0",
+  "description": "A chat app for one to one interaction between users",
+  "license": "ISC",
+  "author": "Aryan Raj",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "env": "^0.0.2",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
