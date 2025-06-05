@@ -2,9 +2,10 @@ import express from "express"
 import chats from "./data/data.js"
 import env from "dotenv"
 import cors from "cors"
-
+import mongoConnection from "./config/db.js"
 
 env.config()
+mongoConnection()
 
 const app= express()
 app.use(cors())
@@ -15,7 +16,6 @@ app.get("/",(req,res)=>{
 
 app.get("/api/chats",(req,res)=>{
     try {
-    console.log("Sending chats data:", chats); // Log the data being sent
     res.send(chats)
   } catch (error) {
     console.error("Error in /api/chats:", error);
@@ -30,6 +30,6 @@ app.get("/api/chats/:id",(req,res)=>{
     else res.send("Id is not present, Please input a valid Id") 
 })
 
-const PORT= process.env.PORT ||5000
+const PORT= process.env.PORT ||5050
 
 app.listen(PORT,console.log(`Server started on port ${PORT}`))
