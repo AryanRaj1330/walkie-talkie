@@ -1,6 +1,5 @@
 import mongoose from "mongoose"
-import env from "dotenv"
-env.config()
+
 
 const connection=async()=>{
     try{
@@ -15,6 +14,5 @@ const connection=async()=>{
     }
 }
 
-connection()
 
 export default connection

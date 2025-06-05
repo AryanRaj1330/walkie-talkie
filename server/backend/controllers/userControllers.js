@@ -1,0 +1,59 @@
+import asyncHandler from "express-async-handler"
+import user from "../models/userModel.js"
+import generateToken from "../config/generateToken.js"
+
+const registerUser= asyncHandler(async(req,res)=>{
+    const {name,email,password}= req.body
+    if(!name||!email||!password){
+        res.status(400)
+        throw new Error("Please enter all the required fields")
+    }
+
+    const userExists= await user.findOne({email})
+    if(userExists){
+        res.status(400)
+        throw new Error("User is already registered")
+    }
+
+    const userData= await user.create({
+        name,
+        email,
+        password
+    })
+    if(userData){
+        res.status(201).json({
+            _id:userData._id,
+            name:userData.name,
+            email:userData.email,
+            JWT_TOKEN:generateToken(user._id)
+        })
+    }
+    else{
+        res.status(400)
+        throw new Error("Failed to create the user")
+    }
+})
+
+const authUser=asyncHandler(async(req,res)=>{
+    const {email,password}=req.body
+    if(!email||!password){
+        res.status(400)
+        throw new Error("Please enter all the required fields")
+    }
+
+    const userPerson= await user.findOne({email})
+    if(userPerson&&(await userPerson.matchPassword(password))){
+       res.status(201).json({
+        _id:userPerson._id,
+        name:userPerson.name,
+        email:userPerson.email,
+        JWT_TOKEN:generateToken(userPerson._id)
+       })
+    }
+    else{
+        res.status(400)
+        throw new Error("Invalid username or password")
+    }
+})
+
+export {registerUser,authUser}
