@@ -1,11 +1,15 @@
 import React from 'react'
 import "../css/homepage.css"
-import {useState} from "react"
+import {useState,useEffect} from "react"
 import axios from "axios"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import {useHistory} from "react-router-dom"
+
 
 const HomePage = () => {
+  const history=useHistory()
+
   const [isLogin,setIsLogin]= useState(true)
   const [name,setName]= useState("")
   const [emailRegister,setEmailRegister]= useState("")
@@ -13,6 +17,7 @@ const HomePage = () => {
   const [confirmPassword,setConfirmPassword]= useState("")
   const [email,setEmail]= useState("")
   const [password,setPassword]= useState("")
+  const [loggedIn,setLoggedIn]= useState(false)
   
   const login=async(e)=>{
     e.preventDefault()
@@ -24,6 +29,7 @@ const HomePage = () => {
       const data=response.data
       toast.success("Logged in successfully")
       console.log(data)
+      setLoggedIn(true)
     }
     catch(error){
       const message = error.response && error.response.data.message
@@ -47,6 +53,7 @@ const HomePage = () => {
       const data=response.data
       toast.success("User Registered")
       console.log(data)
+      setIsLogin(true)
     }
     catch(error){
       const message = error.response && error.response.data.message
@@ -56,7 +63,12 @@ const HomePage = () => {
     }
   }
 
-
+  useEffect(()=>{
+    if(loggedIn){
+      history.push("/chats")
+    }    
+  },[loggedIn,History])
+  
   return (
     <>
      <div className="page-background">
