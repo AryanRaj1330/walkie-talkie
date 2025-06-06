@@ -1,13 +1,61 @@
 import React from 'react'
 import "../css/homepage.css"
 import {useState} from "react"
+import axios from "axios"
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const HomePage = () => {
   const [isLogin,setIsLogin]= useState(true)
   const [name,setName]= useState("")
-  const [email,setEmail]= useState()
-  const [password,setPassword]= useState()
+  const [emailRegister,setEmailRegister]= useState("")
+  const [passwordRegister,setPasswordRegister]= useState("")
+  const [confirmPassword,setConfirmPassword]= useState("")
+  const [email,setEmail]= useState("")
+  const [password,setPassword]= useState("")
   
+  const login=async(e)=>{
+    e.preventDefault()
+    try{
+      const response=await axios.post("http://localhost:5000/api/user/login",{
+        email:email,
+        password:password
+      })
+      const data=response.data
+      toast.success("Logged in successfully")
+      console.log(data)
+    }
+    catch(error){
+      const message = error.response && error.response.data.message
+    ? error.response.data.message
+    : error.message
+      toast.error("Login Failed: "+message)
+    }
+  }
+  const signUp=async(e)=>{
+    e.preventDefault()
+    if(confirmPassword!==passwordRegister){
+      toast.error("Password and confirm password doesn't match")
+      return
+    }
+    try{
+      const response=await axios.post("http://localhost:5000/api/user/",{
+        name:name,
+        email:emailRegister,
+        password:passwordRegister
+      })
+      const data=response.data
+      toast.success("User Registered")
+      console.log(data)
+    }
+    catch(error){
+      const message = error.response && error.response.data.message
+    ? error.response.data.message
+    : error.message
+      toast.error("Registration failed: "+message)
+    }
+  }
+
 
   return (
     <>
@@ -33,13 +81,13 @@ const HomePage = () => {
             <form className="form">
               <div className="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="Enter your email" required />
+                <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter your email" required />
               </div>
               <div className="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Enter your password" required />
+                <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter your password" required />
               </div>
-              <button type="submit" className="submit-btn">Sign In</button>
+              <button type="submit" className="submit-btn" onClick={login} >Sign In</button>
               <div className="forgot-password">
                 <a href="#">Forgot your password?</a>
               </div>
@@ -52,21 +100,21 @@ const HomePage = () => {
             <form className="form">
               <div className="form-group">
                 <label>Full Name</label>
-                <input type="text" placeholder="Enter your full name" required />
+                <input type="text" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Enter your full name" required />
               </div>
               <div className="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="Enter your email" required />
+                <input type="email" value={emailRegister} onChange={(e)=>setEmailRegister(e.target.value)} placeholder="Enter your email" required />
               </div>
               <div className="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Create a password" required />
+                <input type="password" value={passwordRegister} onChange={(e)=>setPasswordRegister(e.target.value)} placeholder="Create a password" required />
               </div>
               <div className="form-group">
                 <label>Confirm Password</label>
-                <input type="password" placeholder="Confirm your password" required />
+                <input type="password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} placeholder="Confirm your password" required />
               </div>
-              <button type="submit" className="submit-btn">Create Account</button>
+              <button type="submit" className="submit-btn" onClick={signUp} >Create Account</button>
               <div className="divider"><span>or</span></div>
               <div className="social-login">
                 <a href="#" className="social-btn google">Google</a>
@@ -76,6 +124,7 @@ const HomePage = () => {
         </div>
       </div>
     </div>
+    <ToastContainer/>
     </>
   )
 }
