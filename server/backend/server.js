@@ -3,7 +3,8 @@ import chats from "./data/data.js"
 import env from "dotenv"
 import cors from "cors"
 import mongoConnection from "./config/db.js"
-import router from "./routes/userRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
+import chatRoutes from "./routes/chatRoutes.js"
 import {notFound,errorHandler} from "./middleware/errorMiddleware.js"
 
 env.config()
@@ -18,7 +19,8 @@ app.get("/",(req,res)=>{
     res.send("App is running")
 })
 
-app.use("/api/user",router)
+app.use("/api/user",userRoutes)
+app.use("/api/chat",chatRoutes)
 
 // app.get("/api/chats",(req,res)=>{
 //     try {

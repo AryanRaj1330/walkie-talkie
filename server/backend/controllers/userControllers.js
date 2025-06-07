@@ -56,4 +56,22 @@ const authUser=asyncHandler(async(req,res)=>{
     }
 })
 
-export {registerUser,authUser}
+// /api/user?search=aryan this is a query we can use this instead of post request
+const allUsers=asyncHandler(async(req,res)=>{
+    const keyword= req.query.search
+    ?{
+        $or:[
+            {name:{$regex: req.query.search, $options:"i"}},
+            {email:{$regex:req.query.search,$options:"i"}}
+        ]
+    }:{}
+    const userData= await user.find(keyword) 
+    if(userData.length===0){
+        res.status(404)
+        throw new Error("No user found")
+        // res.send("No user found")
+    }
+    else res.send(keyword)
+})
+
+export {registerUser,authUser,allUsers}
