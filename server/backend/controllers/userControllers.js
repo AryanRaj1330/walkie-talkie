@@ -65,7 +65,7 @@ const allUsers=asyncHandler(async(req,res)=>{
             {email:{$regex:req.query.search,$options:"i"}}
         ]
     }:{}
-    const userData= await user.find(keyword) 
+    const userData= await user.find(keyword).find({_id:{$ne:req.user._id}}) 
     if(userData.length===0){
         res.status(404)
         throw new Error("No user found")
