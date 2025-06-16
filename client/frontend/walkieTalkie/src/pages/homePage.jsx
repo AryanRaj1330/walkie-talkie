@@ -29,6 +29,7 @@ const HomePage = () => {
         password:password
       })
       const data=response.data
+      localStorage.setItem("userInfo",JSON.stringify(data))
       toast.success("Logged in successfully")
       console.log(data)
       setLoggedIn(true)
