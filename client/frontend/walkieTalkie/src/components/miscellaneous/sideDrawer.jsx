@@ -1,6 +1,6 @@
 import { Box,Button, Text,Flex,CloseButton, Menu, Avatar, Drawer, Input} from '@chakra-ui/react'
 import { Tooltip } from '../ui/tooltip'
-import React from 'react'
+import React, { useEffect } from 'react'
 import {useState} from "react"
 import { BsMenuButton } from 'react-icons/bs'
 import { chatState } from '../../context/chatContext'
@@ -10,6 +10,9 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { Theme } from '@chakra-ui/react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import ChatLoading from './ChatLoading'
+import axios from 'axios'
+import UserListItem from '../userAvatar/UserListItem'
 
 const SideDrawer = () =>{ 
   const[search,setSearch]= useState("")
@@ -23,9 +26,34 @@ const SideDrawer = () =>{
     history.push("/")
   }
   const[openDrawer,setOpenDrawer]= useState(false)
-  const handleSearch=()=>{
-    if(search==="") toast.error("Empty Search Field")
+  const handleSearch=async()=>{
+    if(search===""){
+      toast.error("Empty Search Field")
+      return
+    }
+    try{
+      setLoading(true)
+      const config={
+        headers:{
+          Authorization: `Bearer ${user.JWT_TOKEN}`
+        }
+      }
+
+      const {data}= await axios.get(`/api/user?search=${search}`,config)
+      console.log(data)
+      setLoading(false)
+      setSearchResult(data)
+    }
+    catch(error){
+      toast.error(`Error= ${error.message}`)
+      console.log(error)
+      console.log(error.message)
+    }
   }
+  const accessChats=(userId)=>{
+
+  }
+  
   return (
     <>
       <Box 
@@ -45,13 +73,13 @@ const SideDrawer = () =>{
         </Tooltip>
         <Text display="flex" fontSize="2xl" font="Work Sans">Walkie-Talkie</Text>
         <div id="icon" style={{marginRight:"2px"}}>
-          <i class="fa-solid fa-bell fa-2x" style={{marginRight:"2px"}}></i>
+          <i className="fa-solid fa-bell fa-2x" style={{marginRight:"2px"}}></i>
           <Menu.Root p="2px">
             <Avatar.Root>
-              <Avatar.Fallback name="Aryan Raj"></Avatar.Fallback>
+              <Avatar.Fallback name={user.name}></Avatar.Fallback>
             </Avatar.Root>
             <Menu.Trigger asChild>
-                <Button borderRadius="5px" size="xs"><i class="fa-solid fa-angle-down"></i></Button>
+                <Button borderRadius="5px" size="xs"><i className="fa-solid fa-angle-down"></i></Button>
               </Menu.Trigger>
               <Portal>
                 <Menu.Positioner>
@@ -66,11 +94,6 @@ const SideDrawer = () =>{
       </Box>
       <Theme appearance='light'>
         <Drawer.Root placement="left" open={openDrawer} onOpenChange={(e)=>setOpenDrawer(e.open)}>
-          {/* <Drawer.Trigger asChild>
-            <Button>
-              Click to open
-            </Button>
-          </Drawer.Trigger> */}
           <Portal>
             <Drawer.Backdrop/>
             <Drawer.Positioner>
@@ -93,6 +116,16 @@ const SideDrawer = () =>{
                       Go
                     </Button>
                   </Box>
+                  {loading?(<ChatLoading/>):(
+                    searchResult?.map((user)=>(
+                      <UserListItem
+                      key={user._id}
+                      user={user}
+                      handleFunction={()=>accessChats(user._id)}>
+
+                      </UserListItem>
+                    ))
+                  )}
                 </Drawer.Body>
                 <Drawer.CloseTrigger asChild>
                   <CloseButton size="sm"></CloseButton>

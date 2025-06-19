@@ -69,9 +69,8 @@ const allUsers=asyncHandler(async(req,res)=>{
     if(userData.length===0){
         res.status(404)
         throw new Error("No user found")
-        // res.send("No user found")
     }
-    else res.send(keyword)
+    else res.send(userData)
 })
 
 export {registerUser,authUser,allUsers}
