@@ -1,4 +1,4 @@
-import { Box,Button, Text,Flex,CloseButton, Menu, Avatar, Drawer, Input} from '@chakra-ui/react'
+import { Box,Button, Text,Flex,CloseButton, Menu, Avatar, Drawer, Input, Spinner} from '@chakra-ui/react'
 import { Tooltip } from '../ui/tooltip'
 import React, { useEffect } from 'react'
 import {useState} from "react"
@@ -13,14 +13,16 @@ import 'react-toastify/dist/ReactToastify.css'
 import ChatLoading from './ChatLoading'
 import axios from 'axios'
 import UserListItem from '../userAvatar/UserListItem'
+import { useDisclosure } from '@chakra-ui/react'
 
 const SideDrawer = () =>{ 
   const[search,setSearch]= useState("")
   const[searchResult,setSearchResult]= useState([])
   const[loading,setLoading]= useState(false)
   const[chatLoading,setChatLoading]= useState()
-  const {user}= chatState()
+  const {user,chats,setChats,selectedChat,setSelectedChat}= chatState()
   const history=useHistory()
+  const{onClose}= useDisclosure()
   const logout=()=>{
     localStorage.removeItem("userInfo")
     history.push("/")
@@ -50,8 +52,26 @@ const SideDrawer = () =>{
       console.log(error.message)
     }
   }
-  const accessChats=(userId)=>{
+  const accessChats=async(userId)=>{
+    try{
+      const config={
+        headers:{
+          "content-type":"application/json",
+          Authorization:`Bearer ${user.JWT_TOKEN}`
+        }
+      }
 
+      const {data}= await axios.post("/api/chat",{userId},config)
+
+      if(!chats.find((c)=> c._id===data._id)) setChats([data,...chats])
+      setChatLoading(false)
+      setSelectedChat(data)
+      onClose()
+    }
+    catch(error){
+      toast.error(`Error= ${error.message}`)
+      console.log(error)
+    }
   }
   
   return (
@@ -126,6 +146,7 @@ const SideDrawer = () =>{
                       </UserListItem>
                     ))
                   )}
+                  {chatLoading&&<Spinner color="blue.500" width="4px"></Spinner>}
                 </Drawer.Body>
                 <Drawer.CloseTrigger asChild>
                   <CloseButton size="sm"></CloseButton>

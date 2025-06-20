@@ -22,22 +22,6 @@ app.get("/",(req,res)=>{
 app.use("/api/user",userRoutes)
 app.use("/api/chat",chatRoutes)
 
-// app.get("/api/chats",(req,res)=>{
-//     try {
-//     res.send(chats)
-//   } catch (error) {
-//     console.error("Error in /api/chats:", error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// })
-
-// app.get("/api/chats/:id",(req,res)=>{
-//     // console.log(req.params.id)
-//     const singleChat= chats.find((e)=> e._id=== req.params.id)
-//     if(singleChat) res.send(singleChat)
-//     else res.send("User not found") 
-// })
-
 app.use(notFound);
 app.use(errorHandler);
 
