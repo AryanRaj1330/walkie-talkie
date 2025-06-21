@@ -5,8 +5,8 @@ import axios from "axios"
 import { Box, Button, Stack, Text } from '@chakra-ui/react'
 import "../../css/myChats.css"
 import ChatLoading from '../miscellaneous/ChatLoading'
-import chat from '../../../../../../server/backend/models/chatModel'
 import getSender from '../../config/chatLogic'
+import GroupChatModal from '../miscellaneous/GroupChatModal'
 
 const MyChats = () => {
     const {user,chats,setChats,selectedChat,setSelectedChat}= chatState()
@@ -56,17 +56,19 @@ const MyChats = () => {
       alignItems="center"
       >
         My Chats
-        <Button
-          bg="white"
-          borderRadius={4}
-          color="black"
-          borderWidth="2px"
-          borderColor={"black"}
-          display="flex"
-          fontSize={{base:"17px",md:"10px",lg:"17px"}}
-        >
-          New Group Chat <i className="fa-solid fa-plus"></i>
-        </Button>
+        <GroupChatModal>
+          <Button
+            bg="white"
+            borderRadius={4}
+            color="black"
+            borderWidth="2px"
+            borderColor={"black"}
+            display="flex"
+            fontSize={{base:"17px",md:"10px",lg:"17px"}}
+          >
+            New Group Chat <i className="fa-solid fa-plus"></i>
+          </Button>
+        </GroupChatModal>
       </Box>
       <Box
       display="flex"
@@ -80,11 +82,11 @@ const MyChats = () => {
       >
         {chats?(
           <Stack overFlowY="scroll">
-            {chats.map((chat)=>{
+            {chats.map((chat)=>(
               <Box
                 onClick={()=>setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat===chat?"38B2AC":"#E8E8E8"}
+                bg={selectedChat===chat?"#38B2AC":"#E8E8E8"}
                 color={selectedChat===chat?"white":"black"}
                 px={3}
                 py={2}
@@ -97,7 +99,7 @@ const MyChats = () => {
                   ):chat.chatName}
                 </Text>
               </Box>
-            })}
+            ))}
           </Stack>
         ):
         (<ChatLoading/>)}
