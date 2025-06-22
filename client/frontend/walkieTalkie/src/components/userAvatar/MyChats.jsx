@@ -5,10 +5,10 @@ import axios from "axios"
 import { Box, Button, Stack, Text } from '@chakra-ui/react'
 import "../../css/myChats.css"
 import ChatLoading from '../miscellaneous/ChatLoading'
-import getSender from '../../config/chatLogic'
+import {getSender} from '../../config/chatLogic'
 import GroupChatModal from '../miscellaneous/GroupChatModal'
 
-const MyChats = () => {
+const MyChats = ({fetchAgain}) => {
     const {user,chats,setChats,selectedChat,setSelectedChat}= chatState()
     const[loggedUser,setLoggedUser]= useState()
 
@@ -33,7 +33,7 @@ const MyChats = () => {
     useEffect(()=>{
       setLoggedUser(JSON.parse(localStorage.getItem("userInfo")))
       fetchChats()
-    },[])
+    },[fetchAgain])
   return (
     <>
     <Box
