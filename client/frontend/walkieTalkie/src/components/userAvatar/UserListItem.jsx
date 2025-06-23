@@ -29,7 +29,7 @@ const UserListItem = ({user,handleFunction}) => {
             <Avatar.Fallback name={user.name}></Avatar.Fallback>
         </Avatar.Root>
         <Box>
-            <Text>{user.name}</Text>
+            <Text fontSize={"lg"}>{user.name}</Text>
             <Text fontSize="xs"><b>Email: </b>{user.email}</Text>
         </Box>
     </Box>
