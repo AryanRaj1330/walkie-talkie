@@ -10,6 +10,7 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
   return (
     <>
       {selectedChat?(
+        <>
         <Text
           display="flex"
           fontSize={{base:"20px",md:"25px"}}
@@ -27,10 +28,24 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
             </>):(
             <>
               {selectedChat.chatName}
-              <UpdateGroupChatModal/>            
+              <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>            
             </>
           )}
         </Text>
+        <Box
+          display="flex"
+          flexDir="column"
+          justifyContent="flex-end"
+          p={3}
+          bg="#E8E8E8"
+          w="100%"
+          h="100%"
+          borderRadius="lg"
+          overFlowY="hidden"
+        >
+          
+        </Box>
+        </>
       ):(
         <Box display="flex" alignItems="center" justifyContent="center" height="100%">
           <Text fontSize="2xl" pb={3} style={{fontFamily:"Arial"}}>
