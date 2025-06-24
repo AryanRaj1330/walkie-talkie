@@ -40,8 +40,32 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
       console.log(error)
     }
   }
-  const handleRemove=(user)=>{
+  const handleRemove=async(user1)=>{
+    if(selectedChat.groupAdmin._id!==user._id&&user1._id!==user._id){
+      toast.error("Only Group Admin can remove someone")
+      return
+    }
+    try{
+      setLoading(true)
 
+      const config={
+        headers:{
+          Authorization:`Bearer ${user.JWT_TOKEN}`
+        }
+      }
+
+      const {data}= await axios.put("/api/chat/groupRemove",{
+        chatId:selectedChat._id,
+        userId:user1._id
+      },config)
+      user1._id===user._id?setSelectedChat():setSelectedChat(data)
+      setFetchAgain(!fetchAgain)
+      setLoading(false)
+    }
+    catch(error){
+      toast.error(`Error= ${error.message}`)
+      console.log(error)
+    }
   }
   const handleRename=async()=>{
     if(!groupChatName) return
@@ -106,7 +130,7 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     <>
       <Dialog.Root>
         <Dialog.Trigger asChild>
-          <Button borderRadius={"lg"} bg="grey">
+          <Button ml={693} borderRadius={"lg"} bg="grey">
             <i className="fa-solid fa-eye"></i>
           </Button>
         </Dialog.Trigger>
@@ -141,7 +165,7 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
                       </UserListItem>
                     ))
                   )}
-                  <Button bg="red" color="white" fontSize={"lg"} mt={2} borderRadius={"lg"}>Leave Group</Button>
+                  <Button bg="red" color="white" fontSize={"lg"} mt={2} onClick={()=>handleRemove(user)} borderRadius={"lg"}>Leave Group</Button>
                 </Box>
               </Dialog.Body>
               <Dialog.CloseTrigger asChild>
@@ -151,6 +175,7 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
+      <ToastContainer/>
     </>
   )
 }

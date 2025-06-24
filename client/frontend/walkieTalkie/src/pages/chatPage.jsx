@@ -13,7 +13,6 @@ const ChatPage = () => {
   const {user}= chatState()
   const[fetchAgain,setFetchAgain]= useState()
   useEffect(()=>{
-    console.log(`user=${user}`)
     const userData=localStorage.getItem("userInfo")
     if(!userData) history.push("/")
   },[history])

@@ -11,14 +11,14 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
     <>
       {selectedChat?(
         <>
-        <Text
+        <Box
           display="flex"
           fontSize={{base:"20px",md:"25px"}}
           pb={3}
           px={2}
           w="100%"
           style={{fontFamily:"Arial"}}
-          justifyContent={{base:"space-between"}}
+          justifyContent="space-between"
           alignItems="center"
         >
           {!selectedChat.isGroupChat?(
@@ -31,7 +31,7 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
               <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>            
             </>
           )}
-        </Text>
+        </Box>
         <Box
           display="flex"
           flexDir="column"
