@@ -6,6 +6,7 @@ import mongoConnection from "./config/db.js"
 import userRoutes from "./routes/userRoutes.js"
 import chatRoutes from "./routes/chatRoutes.js"
 import {notFound,errorHandler} from "./middleware/errorMiddleware.js"
+import messageRoutes from "./routes/messageRoutes.js"
 
 env.config()
 mongoConnection()
@@ -21,6 +22,7 @@ app.get("/",(req,res)=>{
 
 app.use("/api/user",userRoutes)
 app.use("/api/chat",chatRoutes)
+app.use("/api/message",messageRoutes)
 
 app.use(notFound);
 app.use(errorHandler);
