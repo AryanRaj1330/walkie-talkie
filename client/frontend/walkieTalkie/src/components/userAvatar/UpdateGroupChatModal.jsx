@@ -8,7 +8,7 @@ import axios from 'axios'
 import ChatLoading from '../miscellaneous/ChatLoading'
 import UserListItem from './UserListItem'
 
-const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
+const UpdateGroupChatModal = ({fetchAgain,setFetchAgain,fetchMessages}) => {
   const {selectedChat,setSelectedChat,user}= chatState()
   const {isOpen,onOpen,onClose}= useDisclosure()
   const[groupChatName,setGroupChatName]= useState("")
@@ -60,6 +60,7 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
       },config)
       user1._id===user._id?setSelectedChat():setSelectedChat(data)
       setFetchAgain(!fetchAgain)
+      fetchMessages()
       setLoading(false)
     }
     catch(error){
@@ -130,7 +131,7 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     <>
       <Dialog.Root>
         <Dialog.Trigger asChild>
-          <Button ml={693} borderRadius={"lg"} bg="grey">
+          <Button ml={690} borderRadius={"lg"} bg="grey">
             <i className="fa-solid fa-eye"></i>
           </Button>
         </Dialog.Trigger>

@@ -17,6 +17,7 @@ const GroupChatModal = ({children}) => {
     const[search,setSearch]= useState("")
     const[loading,setLoading]= useState(false)
     const {onClose}= useDisclosure()
+    const[open,setOpen]= useState(false)
     const {user,chats,setChats}= chatState()
     const handleSearch=async(query)=>{
         setSearch(query)
@@ -47,7 +48,7 @@ const GroupChatModal = ({children}) => {
         toast.error("Group name is empty")
         return
       }
-      if(selectedUsers.length<3){
+      if(selectedUsers.length<2){
         toast.error("Atleast 3 users are required to create a Group Chat")
         return 
       }
@@ -65,6 +66,7 @@ const GroupChatModal = ({children}) => {
         },config)
 
         setChats([data,...chats])
+        setOpen(false)
         onClose()
       }
       catch(error){
@@ -84,7 +86,7 @@ const GroupChatModal = ({children}) => {
     }
   return (
     <>
-        <Dialog.Root>
+        <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
                 {children}
             </Dialog.Trigger>
