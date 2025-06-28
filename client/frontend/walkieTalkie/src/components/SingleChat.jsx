@@ -8,13 +8,34 @@ import axios from 'axios'
 import { toast,ToastContainer } from 'react-toastify'
 import "../css/chatLine.css"
 import ScrollableChats from './ScrollableChats'
+import io from "socket.io-client"
+
+const ENDPOINT="http://localhost:5000"
+var socket,selectedChatCompare
 
 
 const singleChat = ({fetchAgain,setFetchAgain}) => {
-    const {user,selectedChat,setSelectedChat}= chatState()
+    const {user,selectedChat,setSelectedChat,notifications,setNotifications}= chatState()
     const[messages,setMessages]= useState([])
     const[newMessage,setNewMessage]= useState("")
     const[loading,SetLoading]= useState(false)
+    const[socketConnected,setSocketConnected]= useState(false)
+    const[typing,setTyping]= useState(false)
+    const[isTyping,setIsTyping]= useState(false)
+
+    useEffect(()=>{
+      socket= io(ENDPOINT)
+      socket.emit("setup",user)
+      socket.on("connected",()=>setSocketConnected(true))
+      socket.on("typing",()=>{
+        console.log("TYPING EVENT RECEIVED");
+        setIsTyping(true)
+      })
+      socket.on("stop typing",()=>{
+        console.log("STOP TYPING EVENT RECEIVED")
+        setIsTyping(false)
+      })
+    },[])
 
     const fetchMessages=async()=>{
       if(!selectedChat) return
@@ -28,6 +49,7 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
        SetLoading(true)
         const {data}= await axios.get(`/api/message/${selectedChat._id}`,config)
         setMessages(data)
+        socket.emit("join chat room",selectedChat._id)
         SetLoading(false)
       } 
       catch(error){
@@ -37,9 +59,29 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
     }
     useEffect(()=>{
       fetchMessages()
+
+      selectedChatCompare=selectedChat
     },[selectedChat])
+
+    useEffect(()=>{
+      console.log(notifications,"-----")
+    },[notifications])
+    useEffect(()=>{
+      socket.on("message received",(newMessageReceived)=>{
+        if(!selectedChatCompare||selectedChatCompare._id!==newMessageReceived.chat._id){
+          if(!notifications.include(newMessageReceived)){
+            setNotifications([newMessageReceived,...notifications])
+            setFetchAgain(!fetchAgain)
+          }
+        }
+        else{
+          setMessages((prev)=>[...prev,newMessageReceived])
+        }
+      })
+    },[])
     const sendMessage=async(event)=>{
       if(event.key==="Enter"&&newMessage){
+        socket.emit("stop typing",selectedChat._id)
         try{
           const config={
             headers:{
@@ -52,6 +94,8 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
             content:newMessage,
             chatId:selectedChat._id
           },config)
+
+          socket.emit("new message",data)
           setMessages([...messages,data])
         } 
         catch(error){
@@ -62,7 +106,28 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
     }
     const typingHandler=(e)=>{
       setNewMessage(e.target.value)
+
+      if(!socketConnected) return
+
+      if(!typing){
+        setTyping(true)
+
+        socket.emit("typing",selectedChat._id)
+      }
+
+      let lastTyping= new Date().getTime()
+
+      setTimeout(()=>{
+        var timeNow= new Date().getTime()
+        var timeDiff=timeNow-lastTyping
+
+        if(timeDiff>=3000&&typing){
+          socket.emit("stop typing",selectedChat._id)
+          setTyping(false)
+        }
+      },3000)
     }
+    
   return (
     <>
       {selectedChat?(
@@ -97,10 +162,14 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
           w="100%"
           h="100%"
           borderRadius="lg"
-          overFlowY="hidden"
+          overflowY="hidden"
         >
           {loading?(<Spinner size="xl" alignSelf={"center"} w={20} h={20} margin="auto"/>):(
             <div className="messages"><ScrollableChats messages={messages}/></div>
+          )}
+
+          {isTyping?(<div>Loading...</div>):(
+            <></>
           )}
           <Field.Root required>
             <Input placeholder='Your message here' onKeyDown={sendMessage} onChange={typingHandler} value={newMessage} borderWidth={2} borderColor="black" />

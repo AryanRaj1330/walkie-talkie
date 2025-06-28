@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes.js"
 import chatRoutes from "./routes/chatRoutes.js"
 import {notFound,errorHandler} from "./middleware/errorMiddleware.js"
 import messageRoutes from "./routes/messageRoutes.js"
+import {Server} from "socket.io"
 
 env.config()
 mongoConnection()
@@ -27,6 +28,44 @@ app.use("/api/message",messageRoutes)
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT= process.env.PORT ||5050||3000||8000
+const PORT= process.env.PORT ||5000
 
-app.listen(PORT,console.log(`Server started on port ${PORT}`))
+const server=app.listen(PORT,console.log(`Server started on port ${PORT}`))
+
+const io= new Server(server,{
+    pingTimeout:60000,
+    cors:{
+        origin:"http://localhost:5173"
+    }
+})
+
+io.on("connection",(socket)=>{
+    console.log("connected to socket.io")
+    
+    socket.on("setup",(userData)=>{
+        socket.join(userData._id)
+        socket.emit("connected")
+    })
+
+    socket.on("join chat room",(room)=>{
+        console.log("User joined the room "+room)
+    })
+
+    socket.on("typing",(room)=>{
+        socket.in(room).emit("typing")
+    })
+    socket.on("stop typing",(room)=>{
+        socket.in(room).emit("stop typing")
+    })
+
+    socket.on("new message",(newMessageReceived)=>{
+        var chat= newMessageReceived.chat
+        if(!chat.users) return console.log("chat.users is not defined")
+        
+        chat.users.forEach((user)=>{
+            if(user._id===newMessageReceived.sender._id) return
+
+            socket.in(user._id).emit("message received",newMessageReceived)
+        })
+    })
+})

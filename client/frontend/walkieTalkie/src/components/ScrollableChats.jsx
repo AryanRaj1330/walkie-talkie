@@ -5,6 +5,8 @@ import { isLast, isSameSender,isSameSenderMargin,isSameUser } from '../config/ch
 import { Tooltip } from './ui/tooltip'
 import { Avatar } from '@chakra-ui/react'
 
+// very important component 
+
 const ScrollableChats = ({messages}) => {
   const {user}= chatState()
   return (
