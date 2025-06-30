@@ -14,12 +14,14 @@ import ChatLoading from './ChatLoading'
 import axios from 'axios'
 import UserListItem from '../userAvatar/UserListItem'
 import { useDisclosure } from '@chakra-ui/react'
+import ProfileDialogUser from './ProfileDialogUser'
 
 const SideDrawer = () =>{ 
   const[search,setSearch]= useState("")
   const[searchResult,setSearchResult]= useState([])
   const[loading,setLoading]= useState(false)
   const[chatLoading,setChatLoading]= useState()
+  const[open,setOpen]= useState(false)
   const {user,chats,setChats,selectedChat,setSelectedChat}= chatState()
   const history=useHistory()
   const{onClose}= useDisclosure()
@@ -103,7 +105,7 @@ const SideDrawer = () =>{
               <Portal>
                 <Menu.Positioner>
                   <Menu.Content>
-                    <Menu.Item value="profile">My Profile</Menu.Item>
+                    <Menu.Item value="profile" onClick={()=>setOpen(true)}>My Profile</Menu.Item>
                     <Menu.Item value="Logout" onClick={logout}>Logout</Menu.Item>
                   </Menu.Content>
                 </Menu.Positioner>
@@ -111,6 +113,9 @@ const SideDrawer = () =>{
           </Menu.Root>
         </div>
       </Box>
+      {open?(
+        <ProfileDialogUser open={open} setOpen={setOpen} />
+      ):(<></>)}
       <Theme appearance='light'>
         <Drawer.Root placement="left" open={openDrawer} onOpenChange={(e)=>setOpenDrawer(e.open)}>
           <Portal>

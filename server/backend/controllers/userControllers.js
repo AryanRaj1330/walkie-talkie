@@ -15,7 +15,7 @@ const registerUser= asyncHandler(async(req,res)=>{
         throw new Error("User is already registered")
     }
 
-    const userData= await user.create({
+    const userData= await user.create({ // since key and value has same name so it is a shorthand to just write name insteade of name:name
         name,
         email,
         password

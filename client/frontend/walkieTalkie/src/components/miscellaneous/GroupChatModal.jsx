@@ -10,14 +10,13 @@ import UserBadge from '../userAvatar/UserBadge'
 import { useDisclosure } from '@chakra-ui/react'
 
 
-const GroupChatModal = ({children}) => {
+const GroupChatModal = ({open,setOpen}) => {
     const[groupChatName,setGroupChatName]= useState("")
     const[searchedResult,setSearchedResult]= useState([])
     const[selectedUsers,setSelectedUsers]= useState([])
     const[search,setSearch]= useState("")
     const[loading,setLoading]= useState(false)
     const {onClose}= useDisclosure()
-    const[open,setOpen]= useState(false)
     const {user,chats,setChats}= chatState()
     const handleSearch=async(query)=>{
         setSearch(query)
@@ -87,20 +86,18 @@ const GroupChatModal = ({children}) => {
   return (
     <>
         <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger asChild>
-                {children}
-            </Dialog.Trigger>
             <Portal>
                 <Dialog.Backdrop/>
                 <Dialog.Positioner>
                     <Dialog.Content bg="white">
-                        <Dialog.Header>
+                        <Dialog.Header display="flex" justifyContent={"space-between"}>
                             <Dialog.Title
                             font="sans-serif"
                             display="flex"
                             fontSize="35px"
                             justifyContent="center"
                             >Create Group Chat</Dialog.Title>
+                            <CloseButton onClick={()=>setOpen(false)} borderRadius={4} bg="white" color="black" _hover={{bg:"red",color:"white"}} size="sm"/>
                         </Dialog.Header>
                         <Dialog.Body>
                             <Input mb={3} onChange={(e)=>setGroupChatName(e.target.value)} value={groupChatName} bg="white" placeholder='Enter the Group name' variant="subtle"
@@ -125,9 +122,6 @@ const GroupChatModal = ({children}) => {
                                 />))
                             )}
                         </Dialog.Body>
-                        <Dialog.CloseTrigger asChild>
-                            <CloseButton borderRadius={4} bg="black" size="sm"/>
-                        </Dialog.CloseTrigger>
                         <Dialog.Footer display="flex" justifyContent="center">
                             <Button bg="green.500" borderRadius={4} onClick={handleSubmit}>
                                 Create Chat

@@ -11,6 +11,7 @@ import GroupChatModal from '../miscellaneous/GroupChatModal'
 const MyChats = ({fetchAgain}) => {
     const {user,chats,setChats,selectedChat,setSelectedChat}= chatState()
     const[loggedUser,setLoggedUser]= useState()
+    const[open,setOpen]=useState()
 
     const fetchChats=async()=>{
         try{
@@ -55,8 +56,7 @@ const MyChats = ({fetchAgain}) => {
       alignItems="center"
       >
         My Chats
-        <GroupChatModal>
-          <Button
+        <Button
             bg="white"
             borderRadius={4}
             color="black"
@@ -64,10 +64,11 @@ const MyChats = ({fetchAgain}) => {
             borderColor={"black"}
             display="flex"
             fontSize={{base:"17px",md:"10px",lg:"17px"}}
+            onClick={()=>setOpen(true)}
           >
             New Group Chat <i className="fa-solid fa-plus"></i>
           </Button>
-        </GroupChatModal>
+        <GroupChatModal open={open} setOpen={setOpen} />
       </Box>
       <Box
       display="flex"

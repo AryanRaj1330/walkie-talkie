@@ -1,5 +1,4 @@
 import express from "express"
-import chats from "./data/data.js"
 import env from "dotenv"
 import cors from "cors"
 import mongoConnection from "./config/db.js"

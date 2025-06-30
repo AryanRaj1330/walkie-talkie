@@ -64,7 +64,7 @@ const singleChat = ({fetchAgain,setFetchAgain}) => {
     },[selectedChat])
 
     useEffect(()=>{
-      console.log(notifications,"-----")
+      // console.log(notifications,"-----")
     },[notifications])
     useEffect(()=>{
       socket.on("message received",(newMessageReceived)=>{

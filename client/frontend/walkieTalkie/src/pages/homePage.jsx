@@ -55,7 +55,6 @@ const HomePage = () => {
       })
       const data=response.data
       toast.success("User Registered")
-      console.log(data)
       setIsLogin(true)
     }
     catch(error){
