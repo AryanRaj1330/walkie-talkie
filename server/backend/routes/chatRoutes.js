@@ -10,5 +10,4 @@ router.route("/rename").put(protect,renameGroup)
 router.route("/groupAdd").put(protect,addToGroup)
 router.route("/groupRemove").put(protect,removeFromGroup)
 
-// export {accessChats,fetchChats,createGroup,renameGroup,removeFromGroup,addToGroup}
 export default router

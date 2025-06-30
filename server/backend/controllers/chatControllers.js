@@ -7,7 +7,6 @@ const accessChats=asyncHandler(async(req,res)=>{
     if(!userId){
         res.status(401)
         throw new Error("User Id param not sent with request")
-        return
     }
 
     var isChat= await chat.find({
